@@ -1,6 +1,6 @@
 package com.llyods.talkingclock.solutionsToObjectives;
 
-import com.llyods.talkingclock.service.Impl.TalkingClockServiceImpl;
+import com.llyods.talkingclock.service.impl.TalkingClockServiceImpl;
 import lombok.Cleanup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

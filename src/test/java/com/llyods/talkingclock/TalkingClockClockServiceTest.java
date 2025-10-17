@@ -1,7 +1,7 @@
 package com.llyods.talkingclock;
 
 import com.llyods.talkingclock.core.exceptions.BadRequestException;
-import com.llyods.talkingclock.service.Impl.TalkingClockServiceImpl;
+import com.llyods.talkingclock.service.impl.TalkingClockServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -45,9 +45,8 @@ class TalkingClockClockServiceTest {
 	@Test
 	public void testGetTalkingClockValueMethodWithInValidInputs() {
 
-		assertThrows(IllegalArgumentException.class, () -> {
-			talkingClockService.getTalkingClockValue(INVALID_TIME_FORMAT);
-		});
+		assertThrows(IllegalArgumentException.class,
+				() -> talkingClockService.getTalkingClockValue(INVALID_TIME_FORMAT));
 
 	}
 
@@ -67,9 +66,8 @@ class TalkingClockClockServiceTest {
 	void testConvertToHumanFriendlyTextMethodWitInvalidInput() {
 
 		// Test with an invalid time format
-		assertThrows(IllegalArgumentException.class, () -> {
-			talkingClockService.convertToHumanFriendlyText(INVALID_TIME_FORMAT);
-		});
+		assertThrows(IllegalArgumentException.class,
+				() -> talkingClockService.convertToHumanFriendlyText(INVALID_TIME_FORMAT));
 	}
 
 	@Test
@@ -89,9 +87,8 @@ class TalkingClockClockServiceTest {
 	void testConvertToHumanFriendlyTextMethodWitOutOfRangeMinuteInput() {
 
 		// Test with an invalid minute format
-		assertThrows(BadRequestException.class, () -> {
-			talkingClockService.convertToHumanFriendlyText(OUT_OF_RANGE_MINUTE);
-		});
+		assertThrows(BadRequestException.class,
+				() -> talkingClockService.convertToHumanFriendlyText(OUT_OF_RANGE_MINUTE));
 	}
 
 }

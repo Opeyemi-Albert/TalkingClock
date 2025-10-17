@@ -1,4 +1,4 @@
-package com.llyods.talkingclock.service.Impl;
+package com.llyods.talkingclock.service.impl;
 
 import com.llyods.talkingclock.core.constants.MessageConstants;
 import com.llyods.talkingclock.core.exceptions.BadRequestException;
