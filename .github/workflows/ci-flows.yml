@@ -35,7 +35,7 @@ jobs:
         uses: github/super-linter@v6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEFAULT_BRANCH: main
+          DEFAULT_BRANCH: master
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_JAVA: true
           VALIDATE_GOOGLE_JAVA_FORMAT: true
