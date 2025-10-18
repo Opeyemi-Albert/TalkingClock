@@ -11,12 +11,11 @@ import lombok.Setter;
 @Setter
 public class ErrorResponseDto {
 
-	private int statusCode;
+  private int statusCode;
 
-	private String status;
+  private String status;
 
-	private String message;
+  private String message;
 
-	private long timeStamp;
-
+  private long timeStamp;
 }

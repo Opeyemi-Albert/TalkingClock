@@ -5,7 +5,6 @@ package com.llyods.talkingclock.model;
  * @created 10/Nov/2023
  */
 public enum Direction {
-
-	past, to
-
+  past,
+  to
 }
