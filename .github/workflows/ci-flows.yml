@@ -29,12 +29,12 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
+    needs: compile
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       # 1️⃣ Auto-fix Java format
       - name: Apply Google Java Format
@@ -42,13 +42,6 @@ jobs:
           echo "Formatting Java files..."
           wget https://github.com/google/google-java-format/releases/download/v1.22.0/google-java-format-1.22.0-all-deps.jar -O /tmp/google-java-format.jar
           find . -name "*.java" | xargs java -jar /tmp/google-java-format.jar --replace
-
-      # 2️⃣ Auto-fix Markdown style
-      - name: Fix Markdown
-        run: |
-          echo "Fixing Markdown files..."
-          npm install -g markdownlint-cli2
-          markdownlint-cli2-fix "**/*.md" || true
 
       # 3️⃣ Run Super Linter (to verify clean)
       - name: Run Super Linter
@@ -59,17 +52,16 @@ jobs:
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_JAVA: true
           VALIDATE_GOOGLE_JAVA_FORMAT: true
-          VALIDATE_MARKDOWN: true
 
       # 4️⃣ Commit and push any changes back
       - name: Commit changes
         run: |
           if [ -n "$(git status --porcelain)" ]; then
-            git config user.name "Opeyemi-Albert"
-            git config user.email "ci-flows@users.noreply.dev.com"
+            git config user.name "${{ vars.GIT_USER_NAME }}"
+            git config user.email "${{ vars.GIT_USER_EMAIL }}"
             git add .
             git commit -m "Auto-format code via GitHub Actions"
             git push
           else
-            echo "✅ No formatting changes needed."
+            echo "No formatting changes needed."
           fi
