@@ -79,7 +79,7 @@ jobs:
         uses: gitleaks/gitleaks-action@v2
 
       - name: Gitleaks code scan
-        run: detect --source . \
+        run: gitleaks detect --source . \
           --report-path gitleaks-report.json \
           --report-format json --redact \
           --exit-code 1
