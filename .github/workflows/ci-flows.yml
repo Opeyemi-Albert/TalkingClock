@@ -55,8 +55,13 @@ jobs:
 
       # Commit and push any changes back
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "Code Formatting"
-          commit_user_name: ${{ env.GIT_USER_NAME }}
-          commit_user_email: ${{ env.GIT_USER_EMAIL }}
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "${{ env.GIT_USER_NAME }}"
+            git config user.email "${{ env.GIT_USER_EMAIL }}"
+            git add .
+            git commit -m "🧹 Auto-format code via GitHub Actions"
+            git push
+          else
+            echo "✅ No formatting changes needed."
+          fi
