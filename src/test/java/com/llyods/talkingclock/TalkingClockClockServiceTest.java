@@ -42,7 +42,7 @@ class TalkingClockClockServiceTest {
   public void testGetTalkingClockValueMethodWithInValidInputs() {
 
     assertThrows(
-        IllegalArgumentException.class,
+          IllegalArgumentException.class,
         () -> talkingClockService.getTalkingClockValue(INVALID_TIME_FORMAT));
   }
 

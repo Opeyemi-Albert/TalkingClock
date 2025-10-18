@@ -36,14 +36,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      # 1️⃣ Auto-fix Java format
+      # Auto-fix Java format
       - name: Apply Google Java Format
-        run: |
-          echo "Formatting Java files..."
-          wget https://github.com/google/google-java-format/releases/download/v1.22.0/google-java-format-1.22.0-all-deps.jar -O /tmp/google-java-format.jar
-          find . -name "*.java" | xargs java -jar /tmp/google-java-format.jar --replace
+        uses: axel-op/googlejavaformat-action@v3
+        with:
+          args: "--replace"
 
-      # 3️⃣ Run Super Linter (to verify clean)
+      # Run Super Linter (to verify clean)
       - name: Run Super Linter
         uses: github/super-linter/slim@v6
         env:
@@ -53,15 +52,10 @@ jobs:
           VALIDATE_JAVA: true
           VALIDATE_GOOGLE_JAVA_FORMAT: true
 
-      # 4️⃣ Commit and push any changes back
+      # Commit and push any changes back
       - name: Commit changes
-        run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            git config user.name "${{ vars.GIT_USER_NAME }}"
-            git config user.email "${{ vars.GIT_USER_EMAIL }}"
-            git add .
-            git commit -m "Auto-format code via GitHub Actions"
-            git push
-          else
-            echo "No formatting changes needed."
-          fi
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Code Formatting"
+          commit_user_name: ${{ env.GIT_USER_NAME }}
+          commit_user_email: ${{ env.GIT_USER_EMAIL }}
