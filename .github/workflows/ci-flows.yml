@@ -38,7 +38,10 @@ jobs:
 
       # Auto-fix Java format
       - name: Apply Google Java Format
-        run: mvn spotless:apply
+        run: |
+          echo "Applying Google Java Format..."
+          wget https://github.com/google/google-java-format/releases/download/v1.22.0/google-java-format-1.22.0-all-deps.jar -O /tmp/google-java-format.jar
+          find . -name "*.java" | xargs java -jar /tmp/google-java-format.jar --replace
 
       # Run Super Linter (to verify clean)
       - name: Run Super Linter
