@@ -65,10 +65,10 @@ jobs:
       - name: Commit changes
         run: |
           if [ -n "$(git status --porcelain)" ]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git config user.name "Opeyemi-Albert"
+            git config user.email "ci-flows@users.noreply.dev.com"
             git add .
-            git commit -m "🧹 Auto-format code via GitHub Actions"
+            git commit -m "Auto-format code via GitHub Actions"
             git push
           else
             echo "✅ No formatting changes needed."
