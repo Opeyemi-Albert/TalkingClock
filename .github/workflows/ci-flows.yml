@@ -38,9 +38,7 @@ jobs:
 
       # Auto-fix Java format
       - name: Apply Google Java Format
-        uses: axel-op/googlejavaformat-action@v3
-        with:
-          args: "--replace"
+        run: mvn spotless:apply
 
       # Run Super Linter (to verify clean)
       - name: Run Super Linter
