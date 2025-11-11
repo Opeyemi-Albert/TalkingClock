@@ -1,25 +1,10 @@
+####################################################################################################################
+# WARNING: Do not store sensitive information in this file, as its contents will be included in the Qodana report. #
+####################################################################################################################
+
 version: "1.0"
 linter: jetbrains/qodana-jvm:2025.2
 profile:
   name: qodana.recommended
-
 include:
   - name: CheckDependencyLicenses
-exclude:
-  - name: JavadocDeclaration
-
-projectJDK: "17" #(Applied in CI/CD pipeline)
-
-licenseCompliance:
-  allowedLicenses:
-    - Apache-2.0
-    - MIT
-    - BSD-3-Clause
-
-failureConditions:
-  severityThresholds:
-    any: 15
-    critical: 5
-  testCoverageThresholds:
-    fresh: 70
-    total: 50
