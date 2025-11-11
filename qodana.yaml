@@ -30,7 +30,7 @@ bootstrap: sh ./prepare-qodana.sh
 
 #Install IDE plugins before Qodana execution (Applied in CI/CD pipeline)
 plugins:
-  - id: com.intellij.spring #(plugin id can be found at https://plugins.jetbrains.com)
+  - id: org.intellij.qodana #(plugin id can be found at https://plugins.jetbrains.com)
 
 # Quality gate. Will fail the CI/CD pipeline if any condition is not met
 # severityThresholds - configures maximum thresholds for different problem severities
