@@ -2,7 +2,7 @@ package com.llyods.talkingclock.core.constants;
 
 /**
  * @author Opeyemi Adeoye
- * @created 10/Nov/2023
+ * @since 2023-11-10
  */
 public class MessageConstants {
 

@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
 
 /**
  * @author Opeyemi Adeoye
- * @created 10/Nov/2023
+ * @since 2023-11-10
  */
 @OpenAPIDefinition(
     info =

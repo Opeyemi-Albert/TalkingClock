@@ -5,8 +5,8 @@ import lombok.Builder;
 import org.springframework.http.HttpStatus;
 
 /**
- * @author Adeoye Opeyemi
- * @created 10/Nov/2023
+ * @author Opeyemi Adeoye
+ * @since 2023-11-10
  */
 @Builder
 public class ResponseHandler {
