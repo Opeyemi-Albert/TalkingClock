@@ -6,6 +6,7 @@ on:
     branches:
       - master
 
+
 jobs:
   qodana:
     runs-on: ubuntu-latest
