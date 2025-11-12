@@ -10,25 +10,31 @@ permissions:
   contents: read
 
 jobs:
-  compile:
+  setup:
+    name: Setup & Compile
     runs-on: self-hosted
+    outputs:
+      cache-key: ${{ steps.cache.outputs.cache-hit }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-      - name: Build with Maven
+
+      - name: Maven Compile
         run: mvn -B compile
 
   lint:
+    name: Code Lint & Format
     runs-on: self-hosted
-    needs: compile
+    needs: setup
     permissions:
       contents: write
       pull-requests: write
@@ -38,13 +44,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Auto-fix Java format
       - name: Apply Google Java Format
         run: |
           echo "Applying Google Java Format..."
-          wget https://github.com/google/google-java-format/releases/download/v1.22.0/google-java-format-1.22.0-all-deps.jar -O /tmp/google-java-format.jar
+          wget -q https://github.com/google/google-java-format/releases/download/v1.22.0/google-java-format-1.22.0-all-deps.jar -O /tmp/google-java-format.jar
           find . -name "*.java" | xargs java -jar /tmp/google-java-format.jar --replace
-      # Run Super Linter (to verify clean)
+
       - name: Run Super Linter
         uses: github/super-linter/slim@v6
         env:
@@ -53,78 +58,71 @@ jobs:
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_JAVA: true
           VALIDATE_GOOGLE_JAVA_FORMAT: true
-      # Commit and push any changes back
-      - name: Commit changes
+
+      - name: Commit & Push Formatting Changes
         run: |
           if [ -n "$(git status --porcelain)" ]; then
             git config user.name "${{ vars.GIT_USER_NAME }}"
             git config user.email "${{ vars.GIT_USER_EMAIL }}"
             git add .
-            git commit -m " Auto-format code via GitHub Actions"
+            git commit -m "Auto-format code via GitHub Actions"
             git push
           else
             echo "✅ No formatting changes needed."
           fi
 
-  gitleaks-scan:
+  gitleaks:
+    name: Secret Scan (Gitleaks)
     runs-on: self-hosted
-    needs: compile
+    needs: setup
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Gitleaks setup and installation
+      - name: Run Gitleaks
         uses: gitleaks/gitleaks-action@v2
+        with:
+          args: detect --source . --report-path gitleaks-report.json --report-format json --redact --exit-code 1
 
-      - name: Gitleaks code scan
-        run: gitleaks detect --source . --report-path gitleaks-report.json \
-          --report-format json --redact --exit-code 1
-
-      - name: Upload GitLeaks Report
+      - name: Upload Gitleaks Report
         uses: actions/upload-artifact@v4
         with:
           name: gitleaks-report
           path: gitleaks-report.json
 
-  trivy-security-scan:
+  trivy:
     name: Security Scan (Trivy)
     runs-on: self-hosted
     needs: lint
-    permissions:
-      contents: read
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # 1️⃣ Scan local file system (dependencies, binaries, packages)
       - name: Trivy FS Scan
         uses: aquasecurity/trivy-action@0.28.0
         with:
           scan-type: fs
           scan-ref: .
-          format: table
+          format: json
           vuln-type: os,library
           severity: CRITICAL,HIGH
           ignore-unfixed: true
           exit-code: 0
           output: trivy-fs-report.json
 
-      # 2️⃣ Scan IaC files (Terraform, Dockerfile, K8s manifests)
       - name: Trivy Config Scan (IaC)
-        uses: aquasecurity/trivy-action@0.24.0
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           scan-type: config
           scan-ref: .
-          format: table
+          format: json
           exit-code: 0
           output: trivy-config-report.json
 
-      # 3️⃣ Upload scan reports as artifacts
       - name: Upload Trivy Reports
         uses: actions/upload-artifact@v4
         with:
@@ -134,38 +132,43 @@ jobs:
             trivy-config-report.json
 
   test:
+    name: Unit Tests
     runs-on: self-hosted
-    needs: trivy-security-scan
-
+    needs: trivy
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-      - name: Run Unit Test cases
-        if: github.ref== 'refs/heads/master'
-        run: |
-         mvn -B test checkstyle:checkstyle
 
-  build_project_and_sonar_scan:
+      - name: Run Unit Tests
+        if: github.ref == 'refs/heads/master'
+        run: mvn -B test checkstyle:checkstyle
+
+  build_and_package:
+    name: Build & Package
     runs-on: self-hosted
     needs: test
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-      - name: Build-project
-        uses: mvn package
-      - name: Upload JAR artifact
+
+      - name: Build JAR
+        run: mvn -B package
+
+      - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-jar
