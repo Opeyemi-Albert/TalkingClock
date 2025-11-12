@@ -78,7 +78,7 @@ jobs:
     needs: setup
     steps:
       - name: Clean temp directory
-        run: sudo rm -rf /tmp/gitleaks.tmp
+        run: sudo rm -rf /tmp/gitleaks*
 
       - name: Checkout code
         uses: actions/checkout@v4
